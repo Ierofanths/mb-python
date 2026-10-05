@@ -1,0 +1,1286 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Μάθε να προγραμματίζεις το micro:bit: κάθε αποστολή πρώτα με blocks στο MakeCode και μετά σε Python. Για μαθητές 10+.">
+<title>micro:bit Quest: από τα blocks στην Python</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@500;700&family=Commissioner:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F3F5F9; --card:#FFFFFF; --ink:#1E2330; --muted:#566074; --line:#D9DEE7;
+  --pcb:#272B36; --gold:#D8A73A; --led:#FF3B2F; --link:#B8261D;
+  --ws:#E4E9F1; --mk:#1E90FF; --py:#3572A5;
+  --b-basic:#1E90FF; --b-input:#D400D4; --b-music:#E63022; --b-led:#5C2D91; --b-radio:#E3008C;
+  --b-loops:#00AA00; --b-logic:#00A4A6; --b-variables:#DC143C; --b-math:#9400D3; --b-pins:#B22222; --b-serial:#002050;
+  --head:"Comfortaa","Trebuchet MS",system-ui,sans-serif;
+  --body:"Commissioner","Segoe UI",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:72px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 17px/1.6 var(--body)}
+a{color:var(--link)}
+a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid var(--mk);outline-offset:2px;border-radius:4px}
+h1,h2,h3{font-family:var(--head);line-height:1.2;font-weight:700}
+h2{font-size:1.9rem;margin:.2em 0 .5em}
+h3{font-size:1.2rem;margin:1.6em 0 .5em}
+code{font-family:var(--mono);font-size:.88em;background:#E8ECF3;padding:.1em .35em;border-radius:4px}
+.wrap{max-width:820px;margin:0 auto;padding:0 20px}
+
+/* top bar */
+.top{position:sticky;top:0;z-index:20;background:rgba(243,245,249,.94);backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;gap:18px;height:60px;max-width:1100px}
+.brand{font-family:var(--head);font-weight:700;text-decoration:none;color:var(--ink);font-size:1.1rem;white-space:nowrap}
+.top nav{display:flex;gap:16px;margin-left:auto;font-size:.95rem}
+.top nav a{color:var(--muted);text-decoration:none}
+.top nav a:hover{color:var(--ink)}
+.xp{display:flex;align-items:center;gap:10px;font-weight:600;font-size:.9rem;white-space:nowrap}
+.mini{display:grid;grid-template-columns:repeat(5,6px);gap:2px;background:var(--pcb);padding:4px;border-radius:4px}
+.mini i{width:6px;height:6px;border-radius:1px;background:#454B5A}
+.mini i.on{background:var(--led);box-shadow:0 0 4px var(--led)}
+@media (max-width:640px){.top nav{display:none}.xp{margin-left:auto}}
+
+/* hero */
+.hero{padding:56px 0 40px}
+.hero .wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center;max-width:1000px}
+@media (max-width:820px){.hero .wrap{grid-template-columns:1fr}}
+.hero h1{font-size:clamp(2.4rem,6vw,3.6rem);margin:0 0 .3em;letter-spacing:-.01em}
+.hero p.lead{font-size:1.2rem;color:var(--muted);margin:0 0 1.2em;max-width:34em}
+.flow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 1.6em}
+.flow span{font-weight:600;padding:6px 12px;border-radius:8px;color:#fff}
+.flow .f1{background:var(--mk)} .flow .f2{background:var(--py)}
+.flow em{font-style:normal;color:var(--muted)}
+.cta{display:inline-block;background:var(--ink);color:#fff;text-decoration:none;font-weight:600;padding:12px 20px;border-radius:10px}
+.cta:hover{background:#353C4D}
+
+.board{position:relative;background:var(--pcb);border-radius:22px;padding:22px 22px 0;width:min(100%,360px);margin:0 auto;box-shadow:0 18px 40px -18px rgba(30,35,48,.55)}
+.board .logo{display:block;margin:0 auto 16px;width:46px;height:22px;border:3px solid var(--gold);border-radius:12px;background:none;position:relative;cursor:pointer;padding:0}
+.board .logo::before,.board .logo::after{content:"";position:absolute;top:5px;width:6px;height:6px;border-radius:50%;background:var(--gold)}
+.board .logo::before{left:8px}.board .logo::after{right:8px}
+.board .mid{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.bbtn{width:46px;height:46px;border-radius:50%;border:none;background:#11131A;color:#C9CED8;font:700 1rem var(--head);cursor:pointer;box-shadow:0 0 0 5px #3A3F4C}
+.bbtn:active{transform:scale(.94)}
+.matrix{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;padding:6px}
+.matrix i{width:16px;height:16px;border-radius:3px;background:#3B404D;transition:background .12s,box-shadow .12s}
+.matrix i.on{background:var(--led);box-shadow:0 0 12px 2px rgba(255,59,47,.75)}
+.edge{display:flex;align-items:flex-end;gap:5px;margin-top:22px;height:58px;padding:0 4px}
+.edge span{flex:1;height:100%;background:var(--gold);border-radius:8px 8px 0 0;display:flex;align-items:flex-start;justify-content:center;padding-top:8px;font:700 .8rem var(--head);color:var(--pcb)}
+.edge span.thin{flex:.18;padding:0;border-radius:2px 2px 0 0}
+.edge span.big{flex:1.2}
+.board-hint{text-align:center;color:var(--muted);font-size:.85rem;margin-top:12px}
+
+/* map */
+.map{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 0;padding:0;list-style:none}
+.map a{display:inline-flex;gap:6px;align-items:center;text-decoration:none;color:var(--ink);background:var(--card);border:1px solid var(--line);padding:6px 11px;border-radius:999px;font-size:.92rem}
+.map a.done{background:#FFE9E7;border-color:#F5B8B2}
+.map a.done::after{content:"✓";color:var(--link);font-weight:700}
+
+/* sections */
+section.lv{padding:56px 0;border-top:1px solid var(--line)}
+.kicker{font-weight:600;color:var(--muted);font-size:.95rem;margin:0}
+.kicker b{color:var(--link)}
+.parts{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px;padding:0;list-style:none}
+.parts li{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:.95rem}
+.parts li b{display:block}
+.box{border-left:4px solid var(--gold);background:#FFF7E3;padding:12px 16px;border-radius:0 8px 8px 0;margin:1.2em 0}
+.box.tip{border-color:var(--mk);background:#E9F3FF}
+.box.warn{border-color:var(--led);background:#FFECEA}
+.box p{margin:.3em 0}
+.box p:first-child{margin-top:0}
+.challenge{border:2px dashed var(--gold);border-radius:12px;padding:12px 16px;margin:1.4em 0;background:var(--card)}
+.challenge p{margin:.4em 0}
+.challenge strong:first-child{font-family:var(--head)}
+
+.step{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin:1.3em 0}
+.step h3{margin:0 0 .6em;display:flex;align-items:center;gap:10px;font-size:1.1rem}
+.step h3 .n{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:8px;color:#fff;font-size:.95rem;flex:none}
+.step.s1{border-top:5px solid var(--mk)} .step.s1 .n{background:var(--mk)}
+.step.s2{border-top:5px solid var(--py)} .step.s2 .n{background:var(--py)}
+.step p{margin:.5em 0}
+
+table{border-collapse:collapse;width:100%;font-size:.93rem;margin:.8em 0}
+.tscroll{overflow-x:auto}
+th,td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:middle}
+th{font-weight:600;color:var(--muted);font-size:.85rem}
+
+/* code */
+pre.code{position:relative;background:#1F2330;color:#E6E9F0;padding:16px 18px;border-radius:12px;overflow-x:auto;font:400 .9rem/1.55 var(--mono);margin:.8em 0}
+pre.code code{background:none;padding:0;border-radius:0;color:inherit;font-size:inherit}
+pre.code .kw{color:#FF8C7A} pre.code .st{color:#F2C46D} pre.code .cm{color:#8D96AB;font-style:italic} pre.code .nu{color:#8FD3FF}
+.copy{position:absolute;top:8px;right:8px;background:#353B4C;color:#E6E9F0;border:none;border-radius:6px;font:600 .75rem var(--body);padding:5px 9px;cursor:pointer}
+.copy:hover{background:#4A5166}
+details.sol{margin:.8em 0}
+details.sol summary{cursor:pointer;font-weight:600;color:var(--py);padding:6px 0}
+
+/* MakeCode-style blocks */
+.blocks{background:var(--ws);background-image:radial-gradient(#CBD3DF 1px,transparent 1px);background-size:18px 18px;padding:18px;border-radius:12px;overflow-x:auto;display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start;margin:.8em 0}
+.blk{--c:#888;background:var(--c);color:#fff;border-radius:5px;font:600 14px/1.2 var(--body);box-shadow:inset 0 -3px 0 rgba(0,0,0,.18);width:max-content}
+.blk>.row{display:flex;align-items:center;gap:6px;padding:8px 11px;white-space:nowrap}
+.blk.c>.body{margin-left:14px;background:var(--ws);padding:3px 0 3px 0;min-height:24px;display:flex;flex-direction:column;gap:2px;border-radius:0 4px 4px 0;min-width:120px}
+.blk.c>.foot{height:12px}
+.blk.hat{border-top-left-radius:18px;border-top-right-radius:10px}
+.blk.hat>.row:first-child{padding-top:12px}
+.rep{background:var(--c);border:1px solid rgba(0,0,0,.2);border-radius:999px;padding:3px 10px;display:inline-flex;gap:5px;align-items:center}
+.val{background:#fff;color:#333;border-radius:999px;padding:2px 10px;min-width:20px;text-align:center;font-weight:500}
+.val.str::before,.val.str::after{content:'"';color:#999}
+.bool{background:var(--c);clip-path:polygon(10px 0,calc(100% - 10px) 0,100% 50%,calc(100% - 10px) 100%,10px 100%,0 50%);padding:5px 16px;display:inline-flex;gap:5px;align-items:center;filter:brightness(.86)}
+.dd{background:rgba(0,0,0,.2);border-radius:4px;padding:2px 7px}
+.dd::after{content:" ▾";font-size:.8em;opacity:.8}
+.ledgrid{display:inline-grid;grid-template-columns:repeat(5,8px);gap:2px;background:#fff;padding:4px;border-radius:4px}
+.ledgrid i{width:8px;height:8px;border-radius:1px;background:#D3D8E0}
+.ledgrid i.on{background:var(--led)}
+td .blk{margin:0}
+
+.done-btn{margin-top:1.4em;background:var(--ink);color:#fff;border:none;border-radius:10px;font:600 1rem var(--body);padding:12px 18px;cursor:pointer}
+.done-btn:hover{background:#353C4D}
+.done-btn.is-done{background:#FFE9E7;color:var(--link);box-shadow:inset 0 0 0 2px #F5B8B2}
+.badge{display:inline-block;background:var(--gold);color:var(--pcb);font:700 .85rem var(--head);padding:3px 10px;border-radius:999px;vertical-align:middle;margin-left:6px}
+footer{padding:40px 0 60px;color:var(--muted);font-size:.9rem;border-top:1px solid var(--line)}
+.reset{background:none;border:1px solid var(--line);border-radius:8px;padding:6px 12px;font:500 .85rem var(--body);color:var(--muted);cursor:pointer}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#top">micro:bit Quest</a>
+    <nav aria-label="Κύριο μενού">
+      <a href="#meet">Ξεκίνα</a>
+      <a href="#m1">Αποστολές</a>
+      <a href="#cheat">Σκονάκι</a>
+    </nav>
+    <div class="xp" aria-live="polite">
+      <span class="mini" id="xp-mini" aria-hidden="true"></span>
+      <span><span id="xp-num">0</span> XP</span>
+      <span>Επίπεδο <span id="xp-lv">1</span></span>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+<div class="hero">
+  <div class="wrap">
+    <div>
+      <h1>micro:bit Quest!</h1>
+      <p class="lead">Κάνε το micro:bit πυξίδα, ζάρι, θερμόμετρο, πιάνο και ασύρματο. Σε κάθε αποστολή το φτιάχνεις πρώτα με blocks και μετά γράφεις το ίδιο πρόγραμμα σε Python.</p>
+      <div class="flow"><span class="f1">Blocks στο MakeCode</span><em>και μετά</em><span class="f2">Python</span></div>
+      <a class="cta" href="#meet">Ξεκίνα την αποστολή</a>
+    </div>
+    <div>
+      <div class="board" aria-label="Ένα micro:bit που μπορείς να πατήσεις">
+        <button class="logo" data-icon="surprised" aria-label="Άγγιξε το λογότυπο"></button>
+        <div class="mid">
+          <button class="bbtn" data-icon="heart" aria-label="Κουμπί A">A</button>
+          <div class="matrix" id="hero-matrix" aria-hidden="true"></div>
+          <button class="bbtn" data-icon="happy" aria-label="Κουμπί B">B</button>
+        </div>
+        <div class="edge" aria-hidden="true">
+          <span class="big">0</span><span class="thin"></span><span class="thin"></span>
+          <span class="big">1</span><span class="thin"></span><span class="thin"></span>
+          <span class="big">2</span><span class="thin"></span><span class="thin"></span>
+          <span class="big">3V</span><span class="thin"></span><span class="thin"></span>
+          <span class="big">GND</span>
+        </div>
+      </div>
+      <p class="board-hint">Πάτα A, B ή το λογότυπο.</p>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+  <p class="kicker">Ο χάρτης της αποστολής</p>
+  <ul class="map" id="map"></ul>
+</div>
+
+<!-- ================= LEVEL 0 ================= -->
+<section class="lv" id="meet" data-mission data-xp="50" data-title="🔍 Γνωριμία">
+<div class="wrap">
+  <p class="kicker">Επίπεδο 0</p>
+  <h2>🔍 Γνώρισε το micro:bit</h2>
+  <p>Το <strong>BBC micro:bit</strong> είναι ένας μικρός υπολογιστής (ένας <em>μικροελεγκτής</em>) στο μισό μέγεθος μιας πιστωτικής κάρτας. Έχει πάνω του ένα σωρό αισθητήρες. Σε αυτή την περιπέτεια θα τους χρησιμοποιήσεις <strong>όλους</strong>:</p>
+  <ul class="parts">
+    <li>🔴 <b>Οθόνη LED 5 × 5</b>25 κόκκινα λαμπάκια για εικόνες, γράμματα και αριθμούς</li>
+    <li>🅰️🅱️ <b>Κουμπιά A και B</b>Αριστερά και δεξιά της οθόνης</li>
+    <li>👆 <b>Λογότυπο αφής</b>Το χρυσό «προσωπάκι» στην πάνω πλευρά</li>
+    <li>🟡 <b>Ακίδες 0, 1, 2</b>Οι χρυσές λωρίδες κάτω. Νιώθουν το άγγιγμα</li>
+    <li>☀️ <b>Αισθητήρας φωτός</b>Τα ίδια τα LED της οθόνης μετράνε το φως!</li>
+    <li>🌡️ <b>Θερμόμετρο</b>Μέσα στον επεξεργαστή</li>
+    <li>🎢 <b>Επιταχυνσιόμετρο</b>Νιώθει κλίση, κούνημα και πτώση</li>
+    <li>🧭 <b>Μαγνητόμετρο</b>Μια πυξίδα που νιώθει και μαγνήτες</li>
+    <li>🎤 <b>Μικρόφωνο</b>Ακούει πόσο δυνατός είναι ο θόρυβος</li>
+    <li>🔊 <b>Ηχείο</b>Νότες, μελωδίες και αστείοι ήχοι</li>
+    <li>📡 <b>Ραδιόφωνο</b>Στέλνει μηνύματα σε άλλα micro:bit</li>
+  </ul>
+  <h3>Τι άλλο χρειάζεσαι</h3>
+  <ul>
+    <li>Ένα <strong>micro:bit V2</strong>. Το καταλαβαίνεις από το χρυσό λογότυπο που αγγίζεται, το μικρό LED του μικροφώνου δίπλα του και το ηχείο στην πίσω πλευρά. Το λογότυπο, το μικρόφωνο και το ηχείο <strong>δεν υπάρχουν στο V1</strong>.</li>
+    <li>Ένα <strong>καλώδιο USB που μεταφέρει δεδομένα</strong> (κάποια καλώδια μόνο φορτίζουν και δεν θα δουλέψουν).</li>
+    <li>Έναν υπολογιστή με <strong>Chrome</strong> ή <strong>Edge</strong> (κάνει και ένα Chromebook).</li>
+  </ul>
+  <div class="box tip"><p><strong>Δεν έχεις micro:bit μπροστά σου;</strong> Δεν πειράζει. Και το MakeCode και ο επεξεργαστής Python έχουν έναν <strong>προσομοιωτή</strong>: ένα micro:bit στην οθόνη με κουμπιά και ρυθμιστικά για θερμοκρασία, φως, ήχο και κλίση.</p></div>
+  <button class="done-btn" data-done-for="meet">Γνώρισα το micro:bit! +50 XP</button>
+</div>
+</section>
+
+<!-- ================= LEVEL 1 ================= -->
+<section class="lv" id="python" data-mission data-xp="150" data-title="🐍 Blocks και Python">
+<div class="wrap">
+  <p class="kicker">Επίπεδο 1</p>
+  <h2>🐍 Από τα blocks στην Python</h2>
+  <p>Αν έχεις φτιάξει προγράμματα σε Scratch ή MakeCode, <strong>ήδη ξέρεις να προγραμματίζεις</strong>. Η Python κάνει ακριβώς τα ίδια πράγματα. Απλώς αντί να σέρνεις blocks, γράφεις λέξεις.</p>
+
+  <div class="box">
+    <p><strong>💡 Η μεγάλη διαφορά</strong></p>
+    <p>Στο MakeCode υπάρχουν blocks που <em>περιμένουν</em> κάτι να συμβεί, όπως το <strong>on button A pressed</strong>. Στην Python δεν υπάρχουν τέτοια. Γράφουμε έναν βρόχο <code>while True:</code> που τρέχει για πάντα και <strong>ελέγχει συνέχεια</strong>: «πατήθηκε το A; άγγιξε κάποιος το λογότυπο;». Αυτό θα το κάνεις σε σχεδόν κάθε αποστολή.</p>
+  </div>
+
+  <h3>Το λεξικό: blocks σε Python</h3>
+  <div class="tscroll"><table>
+    <thead><tr><th>Block</th><th>Python</th></tr></thead>
+    <tbody>
+      <tr><td data-blk="basic|on start"></td><td>Ό,τι γράφεις στην αρχή, πριν από το <code>while True:</code></td></tr>
+      <tr><td data-blk="basic|forever"></td><td><code>while True:</code></td></tr>
+      <tr><td data-blk="basic|pause \(ms\) (1000)"></td><td><code>sleep(1000)</code></td></tr>
+      <tr><td data-blk="basic|show string &quot;Hi!&quot;"></td><td><code>display.scroll("Hi!")</code></td></tr>
+      <tr><td data-blk="basic|show number (7)"></td><td><code>display.scroll(7)</code></td></tr>
+      <tr><td data-blk="variables|set [score] to (0)"></td><td><code>score = 0</code></td></tr>
+      <tr><td data-blk="variables|change [score] by (1)"></td><td><code>score += 1</code></td></tr>
+      <tr><td data-blk="loops|repeat (4) times"></td><td><code>for i in range(4):</code></td></tr>
+      <tr><td data-blk="logic|if «true» then"></td><td><code>if ...:</code> και <code>else:</code></td></tr>
+      <tr><td data-blk="math|{math:pick random (1) to (6)}"></td><td><code>random.randint(1, 6)</code></td></tr>
+      <tr><td data-blk="input|on button [A] pressed"></td><td><code>if button_a.was_pressed():</code> μέσα στο <code>while True:</code></td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="box tip"><p>Δοκίμασε τα παρακάτω στο <a href="https://python.microbit.org" target="_blank" rel="noopener">python.microbit.org</a>. Πάτα ▶ στον προσομοιωτή και άνοιξε το <strong>Serial</strong> για να δεις τι τυπώνει η <code>print()</code>.</p></div>
+
+  <h3>1. Σχόλια: σημειώσεις για ανθρώπους</h3>
+  <p>Ό,τι γράψεις μετά το <code>#</code> ο υπολογιστής το αγνοεί.</p>
+<script type="text/plain" class="py"># Αυτό είναι σχόλιο. Το micro:bit δεν το διαβάζει.
+</script>
+
+  <h3>2. Μεταβλητές: κουτιά με ετικέτα</h3>
+<script type="text/plain" class="py">score = 0          # ένας αριθμός
+name = "Robo"      # κείμενο μπαίνει σε εισαγωγικά
+score = score + 10 # τώρα το score είναι 10
+score += 5         # συντόμευση: τώρα είναι 15
+print(name, "has", score, "points")
+</script>
+
+  <h3>3. Μαθηματικά</h3>
+<script type="text/plain" class="py">print(7 + 2)    # 9
+print(7 - 2)    # 5
+print(7 * 2)    # 14  (αστεράκι, όχι x)
+print(7 / 2)    # 3.5
+print(7 // 2)   # 3   διαίρεση χωρίς δεκαδικά
+print(7 % 2)    # 1   μόνο το υπόλοιπο
+print(2 ** 3)   # 8   δύναμη
+</script>
+
+  <h3>4. if: αποφάσεις</h3>
+  <p><strong>Η εσοχή μετράει!</strong> Οι γραμμές που είναι 4 κενά πιο μέσα ανήκουν στο <code>if</code>. Στο MakeCode αυτό το κάνει το «στόμα» του block.</p>
+<script type="text/plain" class="py">temperature = 30
+if temperature > 25:
+    print("Hot!")
+elif temperature > 15:
+    print("Nice.")
+else:
+    print("Cold!")
+</script>
+  <p>Συγκρίσεις: <code>&gt;</code> <code>&lt;</code> <code>&gt;=</code> <code>&lt;=</code>, <code>==</code> ίσο (δύο ίσον!), <code>!=</code> διάφορο. Συνδυάζεις με <code>and</code>, <code>or</code>, <code>not</code>.</p>
+
+  <h3>5. Βρόχοι: ξανά και ξανά</h3>
+<script type="text/plain" class="py">for i in range(3):       # 3 φορές: i = 0, 1, 2
+    print("Hip hip hooray", i)
+
+count = 0
+while count < 3:         # όσο ισχύει αυτό...
+    count += 1
+print("counted to", count)
+</script>
+
+  <h3>6. Λίστες: πολλά πράγματα σε ένα κουτί</h3>
+<script type="text/plain" class="py">pets = ["cat", "dog", "hamster"]
+print(pets[0])        # cat  (το μέτρημα ξεκινά από το 0!)
+print(len(pets))      # 3
+pets.append("fish")   # πρόσθεσε στο τέλος
+for p in pets:
+    print(p)
+</script>
+
+  <h3>7. Συναρτήσεις: δικές σου εντολές</h3>
+  <p>Στο MakeCode λέγονται <strong>functions</strong> (κατηγορία Advanced). Είναι ένα block που φτιάχνεις εσύ.</p>
+<script type="text/plain" class="py">def double(n):
+    return n * 2      # δίνει πίσω την απάντηση
+
+print(double(4))      # 8
+</script>
+
+  <h3>8. Κείμενο και αριθμοί</h3>
+<script type="text/plain" class="py">age = 12
+print("I am " + str(age))   # str() κάνει τον αριθμό κείμενο
+print(int("7") + 1)          # int() κάνει το κείμενο αριθμό: 8
+</script>
+
+  <h3>9. import: δανείσου υπερδυνάμεις</h3>
+<script type="text/plain" class="py">from microbit import *   # ΟΛΑ τα εργαλεία του micro:bit
+import random            # τυχαίοι αριθμοί
+import music             # νότες και μελωδίες
+import radio             # μηνύματα σε άλλα micro:bit
+</script>
+  <div class="box"><p><strong>🧠 Θυμήσου</strong>: η Python είναι αυστηρή. Τα κεφαλαία μετράνε (<code>True</code>, όχι <code>true</code>), η άνω και κάτω τελεία μπαίνει στο τέλος των <code>if</code>, <code>for</code>, <code>while</code>, <code>def</code>, και η εσοχή είναι 4 κενά.</p></div>
+  <button class="done-btn" data-done-for="python">Μιλάω Python! +150 XP</button>
+</div>
+</section>
+
+<!-- ================= LEVEL 2 ================= -->
+<section class="lv" id="setup" data-mission data-xp="100" data-title="🛠️ Προετοιμασία">
+<div class="wrap">
+  <p class="kicker">Επίπεδο 2</p>
+  <h2>🛠️ Προετοιμασία: τα δύο εργαλεία σου</h2>
+  <p>Θα δουλεύεις με δύο επεξεργαστές, και οι δύο ανοίγουν στον browser χωρίς εγκατάσταση.</p>
+
+  <div class="step s1">
+    <h3><span class="n">1</span>MakeCode για τα blocks</h3>
+    <ol>
+      <li>Άνοιξε το <a href="https://makecode.microbit.org" target="_blank" rel="noopener">makecode.microbit.org</a> και πάτα <strong>New Project</strong>. Δώσε ένα όνομα.</li>
+      <li>Σέρνεις blocks από τις κατηγορίες στη μέση. Ο <strong>προσομοιωτής</strong> αριστερά δείχνει αμέσως τι θα κάνει το πρόγραμμα.</li>
+      <li>Σύνδεσε το micro:bit με το καλώδιο USB. Πάτα τις τρεις τελείες δίπλα στο <strong>Download</strong> και διάλεξε <strong>Connect device</strong>. Ακολούθησε τα βήματα.</li>
+      <li>Από εκεί και πέρα, κάθε φορά που πατάς <strong>Download</strong> το πρόγραμμα πάει κατευθείαν στο micro:bit.</li>
+    </ol>
+  </div>
+
+  <div class="step s2">
+    <h3><span class="n">2</span>Ο επεξεργαστής Python</h3>
+    <ol>
+      <li>Άνοιξε το <a href="https://python.microbit.org" target="_blank" rel="noopener">python.microbit.org</a>. Αριστερά υπάρχουν έτοιμα παραδείγματα και οδηγός, στη μέση γράφεις κώδικα, δεξιά είναι ο προσομοιωτής.</li>
+      <li>Πάτα ▶ στον προσομοιωτή για να δοκιμάσεις το πρόγραμμα.</li>
+      <li>Για να το στείλεις στο micro:bit, πάτα <strong>Send to micro:bit</strong> και ακολούθησε τα βήματα σύνδεσης.</li>
+    </ol>
+  </div>
+
+  <div class="box tip"><p><strong>Γιατί όχι την Python μέσα στο MakeCode;</strong> Το MakeCode έχει κουμπί που μετατρέπει τα blocks σε Python αυτόματα. Εδώ όμως γράφουμε <strong>MicroPython</strong>, την «κανονική» Python του micro:bit. Η μετάφραση την κάνεις εσύ, και έτσι μαθαίνεις.</p></div>
+
+  <h3>Το πρώτο σου πρόγραμμα</h3>
+  <p>Φτιάξε αυτό στο MakeCode και κατέβασέ το στο micro:bit:</p>
+<script type="text/x-blocks">
+@basic on start
+  basic show string "Hi!"
+</script>
+  <p>Τώρα το ίδιο στο python.microbit.org. Σβήσε ό,τι υπάρχει και γράψε:</p>
+<script type="text/plain" class="py">from microbit import *
+
+display.scroll("Hi!")
+</script>
+  <div class="box warn"><p><strong>Η οθόνη δεν ξέρει ελληνικά!</strong> Τα LED δείχνουν μόνο λατινικούς χαρακτήρες. Γράψε <code>"Geia!"</code> αντί για «Γεια!». Αλλιώς θα δεις ερωτηματικά.</p></div>
+  <div class="box"><p><strong>🐞 Κάτι δεν πάει καλά;</strong></p>
+    <p>Αν ο υπολογιστής δεν βλέπει το micro:bit, δοκίμασε άλλο καλώδιο (μάλλον μόνο φορτίζει) ή άλλη θύρα USB. Αν σου ζητήσει ενημέρωση firmware, ακολούθησε τις οδηγίες.</p>
+    <p>Αν η Python έχει λάθος, το micro:bit δείχνει ένα προσωπάκι και κυλάει στην οθόνη το μήνυμα και τον <strong>αριθμό της γραμμής</strong>. Τα πιο συνηθισμένα λάθη: ξεχασμένη <code>:</code>, λάθος εσοχή, κεφαλαία-μικρά.</p></div>
+  <button class="done-btn" data-done-for="setup">Το micro:bit ζωντάνεψε! +100 XP</button>
+</div>
+</section>
+
+<!-- ================= M1 DISPLAY ================= -->
+<section class="lv" id="m1" data-mission data-xp="100" data-title="🔴 Οθόνη">
+<div class="wrap">
+  <p class="kicker">Αποστολή 1 <span class="badge">+100 XP</span></p>
+  <h2>🔴 Ζωγράφισε με φως</h2>
+  <p>Η οθόνη έχει 25 LED σε 5 στήλες και 5 γραμμές. Μπορείς να δείξεις έτοιμες εικόνες, να κυλήσεις κείμενο ή να ζωγραφίσεις δικές σου εικόνες.</p>
+  <div class="step s1">
+    <h3><span class="n">1</span>Φτιάξ’ το με blocks</h3>
+    <p>Μια καρδιά που χτυπάει: μεγάλη, μικρή, μεγάλη, μικρή… για πάντα. Μετά ένα δικό σου χαμογελαστό πρόσωπο.</p>
+<script type="text/x-blocks">
+@basic on start
+  basic show string "Hello!"
+  basic show leds %00000/01010/00000/10001/01110%
+  basic pause \(ms\) (1000)
+@basic forever
+  basic show icon [♥]
+  basic pause \(ms\) (500)
+  basic show icon [♡ small]
+  basic pause \(ms\) (500)
+</script>
+  </div>
+  <div class="step s2">
+    <h3><span class="n">2</span>Γράψ’ το σε Python</h3>
+    <div class="tscroll"><table>
+      <thead><tr><th>Block</th><th>Python</th></tr></thead>
+      <tbody>
+        <tr><td data-blk="basic|show icon [♥]"></td><td><code>display.show(Image.HEART)</code></td></tr>
+        <tr><td data-blk="basic|show leds %00000/01010/00000/10001/01110%"></td><td><code>display.show(Image("00000:09090:00000:90009:09990"))</code></td></tr>
+        <tr><td data-blk="basic|clear screen"></td><td><code>display.clear()</code></td></tr>
+        <tr><td data-blk="led|plot x (2) y (2)"></td><td><code>display.set_pixel(2, 2, 9)</code></td></tr>
+      </tbody>
+    </table></div>
+    <p>Στην Python κάθε LED έχει φωτεινότητα από <strong>0</strong> (σβηστό) μέχρι <strong>9</strong> (πλήρες). Οι εικόνες γράφονται γραμμή-γραμμή, με <code>:</code> ανάμεσα. Τα <code>on start</code> μπλοκ γίνονται οι πρώτες γραμμές και το <code>forever</code> γίνεται <code>while True:</code>.</p>
+    <p><strong>Η σειρά σου:</strong> γράψε το πρόγραμμα σε Python πριν κοιτάξεις τη λύση.</p>
+    <details class="sol"><summary>Δείξε τη λύση σε Python</summary>
+<script type="text/plain" class="py">from microbit import *
+
+display.scroll("Hello!")
+display.show(Image("00000:"
+                   "09090:"
+                   "00000:"
+                   "90009:"
+                   "09990"))
+sleep(1000)
+
+while True:
+    display.show(Image.HEART)
+    sleep(500)
+    display.show(Image.HEART_SMALL)
+    sleep(500)
+</script>
+    </details>
+  </div>
+  <div class="challenge"><p><strong>🏆 Πρόκληση</strong></p><p>Φτιάξε ένα δικό σου κινούμενο σχέδιο με τουλάχιστον 3 εικόνες (ένα τέρας που ανοιγοκλείνει το στόμα, ένα βέλος που περιστρέφεται…). Πρώτα με <strong>show leds</strong>, μετά με <code>Image("…")</code>. Στην Python δοκίμασε φωτεινότητες ανάμεσα στο 1 και το 9.</p></div>
+  <button class="done-btn" data-done-for="m1">Αποστολή ολοκληρώθηκε!</button>
+</div>
+</section>
+
+<!-- ================= M2 BUTTONS ================= -->
+<section class="lv" id="m2" data-mission data-xp="100" data-title="🅰️ Κουμπιά">
+<div class="wrap">
+  <p class="kicker">Αποστολή 2 <span class="badge">+100 XP</span></p>
+  <h2>🅰️ Ο μετρητής</h2>
+  <p>Ένας μετρητής σαν αυτούς που κρατάνε στην είσοδο μιας εκδήλωσης: το A προσθέτει 1, το B μηδενίζει.</p>
+  <div class="step s1">
+    <h3><span class="n">1</span>Φτιάξ’ το με blocks</h3>
+    <p>Φτιάξε τη μεταβλητή <strong>count</strong> από την κατηγορία Variables.</p>
+<script type="text/x-blocks">
+@basic on start
+  variables set [count] to (0)
+  basic show number {variables:count}
+@input on button [A] pressed
+  variables change [count] by (1)
+  basic show number {variables:count}
+@input on button [B] pressed
+  variables set [count] to (0)
+  basic show number {variables:count}
+</script>
+  </div>
+  <div class="step s2">
+    <h3><span class="n">2</span>Γράψ’ το σε Python</h3>
+    <div class="tscroll"><table>
+      <thead><tr><th>Block</th><th>Python</th></tr></thead>
+      <tbody>
+        <tr><td data-blk="input|on button [A] pressed"></td><td><code>if button_a.was_pressed():</code></td></tr>
+        <tr><td data-blk="logic|«input:button [A] is pressed»"></td><td><code>button_a.is_pressed()</code></td></tr>
+      </tbody>
+    </table></div>
+    <div class="box"><p><strong>was_pressed ή is_pressed;</strong> Το <code>is_pressed()</code> λέει «το κουμπί είναι πατημένο <em>αυτή τη στιγμή</em>». Το <code>was_pressed()</code> λέει «πατήθηκε από την τελευταία φορά που ρώτησα». Για μετρητή θέλουμε το δεύτερο, αλλιώς ένα πάτημα θα μετρούσε εκατό φορές!</p></div>
+    <p><strong>Η σειρά σου:</strong> θυμήσου ότι τα δύο event blocks γίνονται δύο <code>if</code> μέσα σε ένα <code>while True:</code>.</p>
+    <details class="sol"><summary>Δείξε τη λύση σε Python</summary>
+<script type="text/plain" class="py">from microbit import *
+
+count = 0
+display.scroll(count)
+
+while True:
+    if button_a.was_pressed():
+        count += 1
+        display.scroll(count)
+    if button_b.was_pressed():
+        count = 0
+        display.scroll(count)
+</script>
+    </details>
+  </div>
+  <div class="challenge"><p><strong>🏆 Πρόκληση</strong></p><p>Κάνε το B να αφαιρεί 1 αντί να μηδενίζει, αλλά να μην κατεβαίνει ποτέ κάτω από το 0. Πρόσθεσε και το <strong>on button A+B pressed</strong> για μηδενισμό. Στην Python: <code>if button_a.is_pressed() and button_b.is_pressed():</code></p></div>
+  <button class="done-btn" data-done-for="m2">Αποστολή ολοκληρώθηκε!</button>
+</div>
+</section>
+
+<!-- ================= M3 TOUCH ================= -->
+<section class="lv" id="m3" data-mission data-xp="100" data-title="👆 Αφή">
+<div class="wrap">
+  <p class="kicker">Αποστολή 3 <span class="badge">+100 XP</span></p>
+  <h2>👆 Κατοικίδιο που γαργαλιέται</h2>
+  <p>Το χρυσό λογότυπο είναι <strong>αισθητήρας αφής</strong>: νιώθει το μικρό ηλεκτρικό φορτίο του σώματός σου. Το ίδιο και οι ακίδες 0, 1 και 2 στην κάτω άκρη.</p>
+  <div class="step s1">
+    <h3><span class="n">1</span>Φτιάξ’ το με blocks</h3>
+<script type="text/x-blocks">
+@input on logo [pressed]
+  basic show icon [☺ happy]
+  music play sound [giggle] [until done]
+  basic clear screen
+@input on pin [P0] pressed
+  basic show icon [♥]
+@input on pin [P1] pressed
+  basic show icon [☹ sad]
+</script>
+  </div>
+  <div class="step s2">
+    <h3><span class="n">2</span>Γράψ’ το σε Python</h3>
+    <div class="tscroll"><table>
+      <thead><tr><th>Block</th><th>Python</th></tr></thead>
+      <tbody>
+        <tr><td data-blk="input|on logo [pressed]"></td><td><code>if pin_logo.is_touched():</code></td></tr>
+        <tr><td data-blk="input|on pin [P0] pressed"></td><td><code>if pin0.is_touched():</code></td></tr>
+        <tr><td data-blk="music|play sound [giggle] [until done]"></td><td><code>audio.play(Sound.GIGGLE)</code></td></tr>
+      </tbody>
+    </table></div>
+    <details class="sol"><summary>Δείξε τη λύση σε Python</summary>
+<script type="text/plain" class="py">from microbit import *
+
+while True:
+    if pin_logo.is_touched():
+        display.show(Image.HAPPY)
+        audio.play(Sound.GIGGLE)
+        display.clear()
+    if pin0.is_touched():
+        display.show(Image.HEART)
+    if pin1.is_touched():
+        display.show(Image.SAD)
+</script>
+    </details>
+  </div>
+  <div class="box"><p><strong>✋ Κόλπο με τις ακίδες</strong>: για να «νιώσει» η ακίδα 0, με το άλλο χέρι πιάσε την ακίδα <strong>GND</strong>. Έτσι το ρεύμα κάνει κύκλο μέσα από το σώμα σου (είναι ακίνδυνο, πολύ μικρό). Το λογότυπο θέλει μόνο ένα δάχτυλο.</p></div>
+  <div class="box tip"><p><strong>🍌 Πιάνο με φρούτα</strong>: με κροκοδειλάκια σύνδεσε τις ακίδες 0, 1, 2 σε τρεις μπανάνες και κράτα το GND. Τώρα τα φρούτα είναι πλήκτρα!</p></div>
+  <div class="challenge"><p><strong>🏆 Πρόκληση</strong></p><p>Βάλε ήχο και στην ακίδα 2. Οι ήχοι που υπάρχουν: giggle, happy, hello, mysterious, sad, slide, soaring, spring, twinkle, yawn. Στην Python γράφονται με κεφαλαία: <code>Sound.TWINKLE</code>.</p></div>
+  <button class="done-btn" data-done-for="m3">Αποστολή ολοκληρώθηκε!</button>
+</div>
+</section>
+
+<!-- ================= M4 MUSIC ================= -->
+<section class="lv" id="m4" data-mission data-xp="100" data-title="🎵 Μουσική">
+<div class="wrap">
+  <p class="kicker">Αποστολή 4 <span class="badge">+100 XP</span></p>
+  <h2>🎵 Ήχοι παιχνιδιού</h2>
+  <p>Κάθε παιχνίδι έχει έναν χαρούμενο ήχο όταν ανεβαίνεις επίπεδο και έναν λυπημένο όταν χάνεις. Ας φτιάξουμε και τους δύο με το ηχείο στην πίσω πλευρά.</p>
+  <div class="step s1">
+    <h3><span class="n">1</span>Φτιάξ’ το με blocks</h3>
+<script type="text/x-blocks">
+@input on button [A] pressed
+  music play tone [Middle C] for [½ beat] [until done]
+  music play tone [Middle E] for [½ beat] [until done]
+  music play tone [Middle G] for [½ beat] [until done]
+  music play tone [High C] for [1 beat] [until done]
+@input on button [B] pressed
+  music play sound [sad] [until done]
+</script>
+  </div>
+  <div class="step s2">
+    <h3><span class="n">2</span>Γράψ’ το σε Python</h3>
+    <p>Στην Python οι νότες γράφονται σαν κείμενο: <code>"C4:2"</code> σημαίνει νότα <strong>C</strong> (ντο), <strong>4</strong>η οκτάβα (η μεσαία), διάρκεια <strong>2</strong> χτύπους-ρολογιού. Τα 4 χτυπάκια κάνουν ένα beat. Θέλει <code>import music</code>.</p>
+    <div class="tscroll"><table>
+      <thead><tr><th>Block</th><th>Python</th></tr></thead>
+      <tbody>
+        <tr><td data-blk="music|play tone [Middle C] for [1 beat] [until done]"></td><td><code>music.play("C4:4")</code></td></tr>
+        <tr><td data-blk="music|play tone (440) for [1 beat] [until done]"></td><td><code>music.pitch(440, 500)</code> (Hz, χιλιοστά)</td></tr>
+        <tr><td data-blk="music|set volume (128)"></td><td><code>set_volume(128)</code></td></tr>
+      </tbody>
+    </table></div>
+    <details class="sol"><summary>Δείξε τη λύση σε Python</summary>
+<script type="text/plain" class="py">from microbit import *
+import music
+
+while True:
+    if button_a.was_pressed():
+        music.play(["C4:2", "E4:2", "G4:2", "C5:4"])
+    if button_b.was_pressed():
+        audio.play(Sound.SAD)
+</script>
+    </details>
+  </div>
+  <div class="box"><p><strong>🔬 Λίγη φυσική</strong>: το 440 είναι η <strong>συχνότητα</strong> σε Hz, δηλαδή πόσες φορές το δευτερόλεπτο πάλλεται το ηχείο. Η νότα ΛΑ είναι 440 Hz. Διπλασίασε τη συχνότητα και ακούς την ίδια νότα μία οκτάβα ψηλότερα.</p></div>
+  <div class="challenge"><p><strong>🏆 Πρόκληση</strong></p><p>Παίξε τις πρώτες νότες από το «Twinkle Twinkle»: C C G G A A G. Στην Python φτιάξε μια <strong>λίστα</strong> με τις νότες και δώσ’ τη στο <code>music.play()</code>. Μπόνους: <code>music.play(music.BIRTHDAY)</code>.</p></div>
+  <button class="done-btn" data-done-for="m4">Αποστολή ολοκληρώθηκε!</button>
+</div>
+</section>
+
+<!-- ================= M5 LIGHT ================= -->
+<section class="lv" id="m5" data-mission data-xp="100" data-title="☀️ Φως">
+<div class="wrap">
+  <p class="kicker">Αποστολή 5 <span class="badge">+100 XP</span></p>
+  <h2>☀️ Φωτόμετρο και συναγερμός συρταριού</h2>
+  <p>Εδώ κρύβεται ένα μυστικό: το micro:bit δεν έχει ξεχωριστό αισθητήρα φωτός. Χρησιμοποιεί <strong>τα ίδια τα LED της οθόνης</strong> ανάποδα, για να μετρήσει πόσο φως πέφτει πάνω τους. Δίνει αριθμό από 0 (σκοτάδι) έως 255 (πολύ φως).</p>
+  <div class="step s1">
+    <h3><span class="n">1</span>Φτιάξ’ το με blocks</h3>
+    <p>Ένα φωτόμετρο: όσο περισσότερο φως, τόσο ψηλότερη η μπάρα.</p>
+<script type="text/x-blocks">
+@basic forever
+  led plot bar graph of {input:light level} up to (255)
+</script>
+    <p>Σκέπασε την οθόνη με το χέρι σου και φώτισέ την με τον φακό ενός κινητού.</p>
+  </div>
+  <div class="step s2">
+    <h3><span class="n">2</span>Γράψ’ το σε Python</h3>
+    <div class="tscroll"><table>
+      <thead><tr><th>Block</th><th>Python</th></tr></thead>
+      <tbody>
+        <tr><td data-blk="input|{input:light level}"></td><td><code>display.read_light_level()</code></td></tr>
+        <tr><td data-blk="led|plot bar graph of (…) up to (255)"></td><td><strong>Δεν υπάρχει!</strong> Θα το φτιάξεις εσύ.</td></tr>
+      </tbody>
+    </table></div>
+    <p>Εδώ η Python δεν έχει έτοιμο block, οπότε φτιάχνουμε μια <strong>συνάρτηση</strong> <code>bar_graph</code>. Υπολογίζει πόσες γραμμές (0 έως 5) να ανάψει και τις ανάβει από κάτω προς τα πάνω με <code>set_pixel</code>. Θα την ξαναχρησιμοποιήσεις στην Αποστολή 10.</p>
+    <details class="sol"><summary>Δείξε τη λύση σε Python</summary>
+<script type="text/plain" class="py">from microbit import *
+
+def bar_graph(value, top):
+    rows = value * 6 // (top + 1)      # από 0 έως 5 γραμμές
+    display.clear()
+    for y in range(rows):
+        for x in range(5):
+            display.set_pixel(x, 4 - y, 9)   # η γραμμή 4 είναι η κάτω
+
+while True:
+    level = display.read_light_level()
+    bar_graph(level, 255)
+    print(level)
+    sleep(100)
+</script>
+    </details>
+  </div>
+  <div class="challenge"><p><strong>🏆 Πρόκληση: συναγερμός συρταριού</strong></p><p>Κλείσε το micro:bit σε ένα σκοτεινό συρτάρι. Όταν κάποιος το ανοίξει και το επίπεδο φωτός ανέβει πάνω από 50, να παίζει ήχο και να δείχνει <code>Image.ANGRY</code>. Με <code>print(level)</code> μέτρησε πρώτα τι τιμές παίρνεις στο σκοτάδι και στο φως, και διάλεξε το όριο ανάμεσα.</p></div>
+  <button class="done-btn" data-done-for="m5">Αποστολή ολοκληρώθηκε!</button>
+</div>
+</section>
+
+<!-- ================= M6 TEMPERATURE ================= -->
+<section class="lv" id="m6" data-mission data-xp="100" data-title="🌡️ Θερμόμετρο">
+<div class="wrap">
+  <p class="kicker">Αποστολή 6 <span class="badge">+100 XP</span></p>
+  <h2>🌡️ Θερμόμετρο τάξης</h2>
+  <p>Ο αισθητήρας θερμοκρασίας βρίσκεται μέσα στον επεξεργαστή και δίνει ακέραιους βαθμούς Κελσίου.</p>
+  <div class="step s1">
+    <h3><span class="n">1</span>Φτιάξ’ το με blocks</h3>
+<script type="text/x-blocks">
+@input on button [A] pressed
+  basic show number {input:temperature \(°C\)}
+@input on button [B] pressed
+  logic if «{input:temperature \(°C\)} > (25)» then
+    basic show string "ZESTH"
+  logic else
+    basic show string "DROSIA"
+</script>
+  </div>
+  <div class="step s2">
+    <h3><span class="n">2</span>Γράψ’ το σε Python</h3>
+    <div class="tscroll"><table>
+      <thead><tr><th>Block</th><th>Python</th></tr></thead>
+      <tbody>
+        <tr><td data-blk="input|{input:temperature \(°C\)}"></td><td><code>temperature()</code></td></tr>
+      </tbody>
+    </table></div>
+    <details class="sol"><summary>Δείξε τη λύση σε Python</summary>
+<script type="text/plain" class="py">from microbit import *
+
+while True:
+    if button_a.was_pressed():
+        display.scroll(str(temperature()) + "C")
+    if button_b.was_pressed():
+        if temperature() > 25:
+            display.scroll("ZESTH")
+        else:
+            display.scroll("DROSIA")
+</script>
+    </details>
+  </div>
+  <div class="box"><p><strong>🌡️ Βαθμονόμηση</strong>: ο επεξεργαστής ζεσταίνεται λίγο όταν δουλεύει, οπότε το micro:bit μπορεί να δείχνει 1 με 3 βαθμούς παραπάνω. Βάλε δίπλα ένα κανονικό θερμόμετρο, βρες τη διαφορά και αφαίρεσέ την: <code>temp = temperature() - 2</code>. Αυτό κάνουν οι επιστήμονες με κάθε όργανο μέτρησης.</p></div>
+  <div class="challenge"><p><strong>🏆 Πρόκληση: θερμόμετρο μεγίστου</strong></p><p>Φτιάξε τη μεταβλητή <strong>max</strong>. Κάθε δευτερόλεπτο, αν η θερμοκρασία είναι μεγαλύτερη από το max, άλλαξε το max. Το A δείχνει τη μέγιστη θερμοκρασία της ημέρας. Άφησέ το στο παράθυρο ένα διάλειμμα!</p></div>
+  <button class="done-btn" data-done-for="m6">Αποστολή ολοκληρώθηκε!</button>
+</div>
+</section>
+
+<!-- ================= M7 ACCELEROMETER ================= -->
+<section class="lv" id="m7" data-mission data-xp="150" data-title="🎢 Κλίση">
+<div class="wrap">
+  <p class="kicker">Αποστολή 7 <span class="badge">+150 XP</span></p>
+  <h2>🎢 Δείκτης κλίσης και κυλιόμενη μπίλια</h2>
+  <p>Το <strong>επιταχυνσιόμετρο</strong> μετράει επιταχύνσεις, και τη βαρύτητα! Δίνει τρεις αριθμούς, για τους άξονες <strong>x</strong> (αριστερά-δεξιά), <strong>y</strong> (μπρος-πίσω) και <strong>z</strong> (πάνω-κάτω), σε <strong>milli-g</strong>. Ακίνητο πάνω στο θρανίο με την οθόνη προς τα πάνω, το z είναι περίπου −1024: αυτό είναι το 1 g της βαρύτητας της Γης.</p>
+  <div class="step s1">
+    <h3><span class="n">1</span>Φτιάξ’ το με blocks</h3>
+    <p>Γείρε το micro:bit αριστερά ή δεξιά, και ένα βέλος δείχνει προς τα πού γέρνει.</p>
+<script type="text/x-blocks">
+@basic forever
+  logic if «{input:acceleration \(mg\) [x]} < (-300)» then
+    basic show arrow [West]
+  logic else if «{input:acceleration \(mg\) [x]} > (300)» then
+    basic show arrow [East]
+  logic else
+    basic show icon [✓ yes]
+</script>
+  </div>
+  <div class="step s2">
+    <h3><span class="n">2</span>Γράψ’ το σε Python</h3>
+    <div class="tscroll"><table>
+      <thead><tr><th>Block</th><th>Python</th></tr></thead>
+      <tbody>
+        <tr><td data-blk="input|{input:acceleration \(mg\) [x]}"></td><td><code>accelerometer.get_x()</code></td></tr>
+        <tr><td data-blk="basic|show arrow [West]"></td><td><code>display.show(Image.ARROW_W)</code></td></tr>
+        <tr><td data-blk="logic|else if"></td><td><code>elif</code></td></tr>
+      </tbody>
+    </table></div>
+    <details class="sol"><summary>Δείξε τη λύση σε Python</summary>
+<script type="text/plain" class="py">from microbit import *
+
+while True:
+    x = accelerometer.get_x()
+    if x < -300:
+        display.show(Image.ARROW_W)
+    elif x > 300:
+        display.show(Image.ARROW_E)
+    else:
+        display.show(Image.YES)
+    sleep(100)
+</script>
+    </details>
+  </div>
+  <h3>⭐ Μπόνους μόνο σε Python: η μπίλια</h3>
+  <p>Ένα LED που «κυλάει» προς τη μεριά που γέρνεις. Μετατρέπουμε τα milli-g (από −1024 έως 1024) σε θέση στην οθόνη (από 0 έως 4). Οι <code>min</code> και <code>max</code> κρατάνε τον αριθμό μέσα στην οθόνη.</p>
+<script type="text/plain" class="py">from microbit import *
+
+while True:
+    x = accelerometer.get_x()
+    y = accelerometer.get_y()
+    col = min(4, max(0, (x + 1024) * 5 // 2048))
+    row = min(4, max(0, (y + 1024) * 5 // 2048))
+    display.clear()
+    display.set_pixel(col, row, 9)
+    sleep(50)
+</script>
+  <div class="box tip"><p><strong>📈 Δες τη γραφική παράσταση</strong>: στο MakeCode βάλε το block <strong>serial write value "x" = acceleration x</strong> μέσα στο forever και πάτα <strong>Show data</strong> κάτω από τον προσομοιωτή. Θα δεις ζωντανά τη γραμμή να ανεβοκατεβαίνει καθώς γέρνεις.</p></div>
+  <div class="challenge"><p><strong>🏆 Πρόκληση: αλφάδι</strong></p><p>Δείξε <code>Image.YES</code> μόνο όταν το micro:bit είναι εντελώς οριζόντιο, δηλαδή και το x και το y είναι ανάμεσα στο −50 και το 50. Δοκίμασέ το πάνω σε θρανία και ράφια της τάξης. Είναι όλα ίσια;</p></div>
+  <button class="done-btn" data-done-for="m7">Αποστολή ολοκληρώθηκε!</button>
+</div>
+</section>
+
+<!-- ================= M8 GESTURES ================= -->
+<section class="lv" id="m8" data-mission data-xp="100" data-title="🎲 Ζάρι">
+<div class="wrap">
+  <p class="kicker">Αποστολή 8 <span class="badge">+100 XP</span></p>
+  <h2>🎲 Ζάρι που κουνιέται</h2>
+  <p>Το micro:bit αναγνωρίζει μόνο του <strong>χειρονομίες</strong> από το επιταχυνσιόμετρο: κούνημα, γύρισμα ανάποδα, ελεύθερη πτώση. Ας φτιάξουμε ένα ζάρι που «νυστάζει» όταν το γυρίζεις ανάποδα.</p>
+  <div class="step s1">
+    <h3><span class="n">1</span>Φτιάξ’ το με blocks</h3>
+<script type="text/x-blocks">
+@input on [shake]
+  basic show number {math:pick random (1) to (6)}
+@input on [screen down]
+  basic clear screen
+  music play sound [yawn] [until done]
+</script>
+  </div>
+  <div class="step s2">
+    <h3><span class="n">2</span>Γράψ’ το σε Python</h3>
+    <div class="tscroll"><table>
+      <thead><tr><th>Block</th><th>Python</th></tr></thead>
+      <tbody>
+        <tr><td data-blk="input|on [shake]"></td><td><code>if accelerometer.was_gesture("shake"):</code></td></tr>
+        <tr><td data-blk="math|{math:pick random (1) to (6)}"></td><td><code>random.randint(1, 6)</code> (θέλει <code>import random</code>)</td></tr>
+      </tbody>
+    </table></div>
+    <p>Τα ονόματα των χειρονομιών στην Python:</p>
+    <div class="tscroll"><table>
+      <thead><tr><th>MakeCode</th><th>Python</th></tr></thead>
+      <tbody>
+        <tr><td>shake</td><td><code>"shake"</code></td></tr>
+        <tr><td>logo up / logo down</td><td><code>"up"</code> / <code>"down"</code></td></tr>
+        <tr><td>screen up / screen down</td><td><code>"face up"</code> / <code>"face down"</code></td></tr>
+        <tr><td>tilt left / tilt right</td><td><code>"left"</code> / <code>"right"</code></td></tr>
+        <tr><td>free fall</td><td><code>"freefall"</code></td></tr>
+      </tbody>
+    </table></div>
+    <details class="sol"><summary>Δείξε τη λύση σε Python</summary>
+<script type="text/plain" class="py">from microbit import *
+import random
+
+while True:
+    if accelerometer.was_gesture("shake"):
+        display.show(random.randint(1, 6))
+    if accelerometer.was_gesture("face down"):
+        display.clear()
+        audio.play(Sound.YAWN)
+</script>
+    </details>
+  </div>
+  <div class="challenge"><p><strong>🏆 Πρόκληση: πέτρα, ψαλίδι, χαρτί</strong></p><p>Με κούνημα το micro:bit διαλέγει τυχαία μία από τρεις εικόνες που ζωγράφισες. Στην Python βάλε τις τρεις εικόνες σε μια <strong>λίστα</strong> και χρησιμοποίησε <code>random.choice(images)</code>.</p></div>
+  <button class="done-btn" data-done-for="m8">Αποστολή ολοκληρώθηκε!</button>
+</div>
+</section>
+
+<!-- ================= M9 COMPASS ================= -->
+<section class="lv" id="m9" data-mission data-xp="150" data-title="🧭 Πυξίδα">
+<div class="wrap">
+  <p class="kicker">Αποστολή 9 <span class="badge">+150 XP</span></p>
+  <h2>🧭 Πυξίδα και κυνηγός μαγνητών</h2>
+  <p>Το <strong>μαγνητόμετρο</strong> μετράει μαγνητικά πεδία. Η Γη είναι ένας τεράστιος μαγνήτης, οπότε το micro:bit μπορεί να γίνει πυξίδα. Η <strong>κατεύθυνση</strong> (heading) είναι μια γωνία από 0° έως 359°: 0° σημαίνει ότι η πάνω άκρη του micro:bit (εκεί που είναι το λογότυπο) δείχνει βορρά.</p>
+  <div class="box warn"><p><strong>Πρώτα βαθμονόμηση!</strong> Την πρώτη φορά το micro:bit θα σου πει <em>TILT TO FILL SCREEN</em>. Γείρε το προς όλες τις μεριές μέχρι να ανάψουν όλα τα LED. Έτσι μαθαίνει το μαγνητικό πεδίο γύρω του.</p></div>
+  <div class="step s1">
+    <h3><span class="n">1</span>Φτιάξ’ το με blocks</h3>
+    <p>Δείξε «N» όταν κοιτάς βόρεια, δηλαδή όταν η γωνία είναι κάτω από 45° ή πάνω από 315°.</p>
+<script type="text/x-blocks">
+@basic forever
+  variables set [heading] to {input:compass heading \(°\)}
+  logic if ««{variables:heading} < (45)» or «{variables:heading} > (315)»» then
+    basic show string "N"
+  logic else
+    basic clear screen
+</script>
+  </div>
+  <div class="step s2">
+    <h3><span class="n">2</span>Γράψ’ το σε Python</h3>
+    <div class="tscroll"><table>
+      <thead><tr><th>Block</th><th>Python</th></tr></thead>
+      <tbody>
+        <tr><td data-blk="input|{input:compass heading \(°\)}"></td><td><code>compass.heading()</code></td></tr>
+        <tr><td data-blk="input|{input:magnetic force \(µT\) [strength]}"></td><td><code>compass.get_field_strength() // 1000</code></td></tr>
+        <tr><td data-blk="input|calibrate compass"></td><td><code>compass.calibrate()</code></td></tr>
+      </tbody>
+    </table></div>
+    <details class="sol"><summary>Δείξε τη λύση σε Python</summary>
+<script type="text/plain" class="py">from microbit import *
+
+while True:
+    heading = compass.heading()
+    if heading < 45 or heading > 315:
+        display.show("N")
+    else:
+        display.clear()
+    sleep(100)
+</script>
+    </details>
+  </div>
+  <h3>Κυνηγός μαγνητών</h3>
+  <p>Το μαγνητικό πεδίο της Γης στην Ελλάδα είναι περίπου 45 μικροτέσλα (µT). Ένας μαγνήτης ψυγείου κοντά στο micro:bit δίνει εκατοντάδες!</p>
+<script type="text/x-blocks">
+@basic forever
+  logic if «{input:magnetic force \(µT\) [strength]} > (200)» then
+    basic show icon [◆ diamond]
+    music play tone [High C] for [¼ beat] [until done]
+  logic else
+    basic clear screen
+</script>
+  <div class="box"><p><strong>⚠️ Παγίδα μονάδων</strong>: στην Python το <code>compass.get_field_strength()</code> δίνει <strong>νανοτέσλα</strong> (nT), όχι μικροτέσλα. 1 µT = 1000 nT, γι’ αυτό διαιρούμε με το 1000. Γράψε τον κυνηγό μαγνητών σε Python μόνος σου.</p></div>
+  <div class="challenge"><p><strong>🏆 Πρόκληση</strong></p><p>Φτιάξε κανονική πυξίδα που δείχνει <strong>N</strong>, <strong>E</strong>, <strong>S</strong> ή <strong>W</strong>. Πόσα <code>elif</code> χρειάζεσαι; Μετά φέρε τη δίπλα σε ένα μεταλλικό ντουλάπι: τι παθαίνει;</p></div>
+  <button class="done-btn" data-done-for="m9">Αποστολή ολοκληρώθηκε!</button>
+</div>
+</section>
+
+<!-- ================= M10 MICROPHONE ================= -->
+<section class="lv" id="m10" data-mission data-xp="150" data-title="🎤 Μικρόφωνο">
+<div class="wrap">
+  <p class="kicker">Αποστολή 10 <span class="badge">+150 XP</span></p>
+  <h2>🎤 Ηχόμετρο και φως με παλαμάκια</h2>
+  <p>Το μικρόφωνο δεν ηχογραφεί φωνές. Μετράει μόνο <strong>πόσο δυνατός</strong> είναι ο ήχος, από 0 έως 255. Όταν το μικρόφωνο ακούει, ανάβει το μικρό LED δίπλα στο λογότυπο.</p>
+  <div class="step s1">
+    <h3><span class="n">1</span>Φτιάξ’ το με blocks</h3>
+    <p>Το φως που ανάβει και σβήνει με ένα παλαμάκι. Η μεταβλητή <strong>lightOn</strong> θυμάται αν είναι αναμμένο.</p>
+<script type="text/x-blocks">
+@basic on start
+  variables set [lightOn] to «false»
+@input on [loud] sound
+  variables set [lightOn] to «not {variables:lightOn}»
+  logic if «{variables:lightOn}» then
+    basic show leds %11111/11111/11111/11111/11111%
+  logic else
+    basic clear screen
+</script>
+  </div>
+  <div class="step s2">
+    <h3><span class="n">2</span>Γράψ’ το σε Python</h3>
+    <div class="tscroll"><table>
+      <thead><tr><th>Block</th><th>Python</th></tr></thead>
+      <tbody>
+        <tr><td data-blk="input|on [loud] sound"></td><td><code>if microphone.was_event(SoundEvent.LOUD):</code></td></tr>
+        <tr><td data-blk="input|{input:sound level}"></td><td><code>microphone.sound_level()</code></td></tr>
+        <tr><td data-blk="input|set [loud] sound threshold to (128)"></td><td><code>microphone.set_threshold(SoundEvent.LOUD, 128)</code></td></tr>
+        <tr><td data-blk="logic|«not «false»»"></td><td><code>not</code></td></tr>
+      </tbody>
+    </table></div>
+    <details class="sol"><summary>Δείξε τη λύση σε Python</summary>
+<script type="text/plain" class="py">from microbit import *
+
+light_on = False
+
+while True:
+    if microphone.was_event(SoundEvent.LOUD):
+        light_on = not light_on          # αναποδογυρίζει True / False
+        if light_on:
+            display.show(Image("99999:99999:99999:99999:99999"))
+        else:
+            display.clear()
+    sleep(100)
+</script>
+    </details>
+  </div>
+  <h3>Ηχόμετρο</h3>
+  <p>Στα blocks είναι ένα μόνο block. Στην Python ξαναχρησιμοποίησε τη συνάρτηση <code>bar_graph</code> από την Αποστολή 5. Γι’ αυτό φτιάχνουμε συναρτήσεις!</p>
+<script type="text/x-blocks">
+@basic forever
+  led plot bar graph of {input:sound level} up to (255)
+</script>
+  <div class="challenge"><p><strong>🏆 Πρόκληση: φύλακας της βιβλιοθήκης</strong></p><p>Όταν η στάθμη ήχου είναι κάτω από ένα όριο δείξε <code>Image.HAPPY</code>, αλλιώς <code>Image.ANGRY</code> και έναν ήχο. Πρώτα μέτρησε με <code>print(microphone.sound_level())</code> πόσο είναι η ησυχία, η κουβέντα και ένα παλαμάκι στην τάξη σου, και διάλεξε το όριο.</p></div>
+  <button class="done-btn" data-done-for="m10">Αποστολή ολοκληρώθηκε!</button>
+</div>
+</section>
+
+<!-- ================= M11 RADIO ================= -->
+<section class="lv" id="m11" data-mission data-xp="150" data-title="📡 Ραδιόφωνο">
+<div class="wrap">
+  <p class="kicker">Αποστολή 11 <span class="badge">+150 XP</span></p>
+  <h2>📡 Μυστικά μηνύματα</h2>
+  <p>Τα micro:bit μιλάνε μεταξύ τους με <strong>ραδιοκύματα</strong>, χωρίς καλώδια. Χρειάζεσαι <strong>δύο</strong> micro:bit (ή έναν συμμαθητή). Βάλτε και στα δύο το <strong>ίδιο πρόγραμμα</strong>.</p>
+  <div class="step s1">
+    <h3><span class="n">1</span>Φτιάξ’ το με blocks</h3>
+<script type="text/x-blocks">
+@basic on start
+  radio radio set group (7)
+@input on button [A] pressed
+  radio radio send string "Geia!"
+@radio on radio received [receivedString]
+  basic show string {variables:receivedString}
+</script>
+  </div>
+  <div class="step s2">
+    <h3><span class="n">2</span>Γράψ’ το σε Python</h3>
+    <div class="tscroll"><table>
+      <thead><tr><th>Block</th><th>Python</th></tr></thead>
+      <tbody>
+        <tr><td data-blk="radio|radio set group (7)"></td><td><code>radio.config(group=7)</code> και <code>radio.on()</code></td></tr>
+        <tr><td data-blk="radio|radio send string &quot;Geia!&quot;"></td><td><code>radio.send("Geia!")</code></td></tr>
+        <tr><td data-blk="radio|on radio received [receivedString]"></td><td><code>message = radio.receive()</code> και <code>if message:</code></td></tr>
+      </tbody>
+    </table></div>
+    <p>Το <code>radio.receive()</code> δίνει το μήνυμα που ήρθε ή <code>None</code> αν δεν ήρθε τίποτα. Το <code>if message:</code> ισχύει μόνο αν ήρθε κάτι.</p>
+    <details class="sol"><summary>Δείξε τη λύση σε Python</summary>
+<script type="text/plain" class="py">from microbit import *
+import radio
+
+radio.config(group=7)
+radio.on()
+
+while True:
+    if button_a.was_pressed():
+        radio.send("Geia!")
+    message = radio.receive()
+    if message:
+        display.scroll(message)
+</script>
+    </details>
+  </div>
+  <div class="box tip"><p><strong>📻 Ομάδα (group)</strong>: σαν κανάλι στο walkie-talkie, από 0 έως 255. Κάθε ζευγάρι στην τάξη διαλέγει διαφορετικό αριθμό, αλλιώς θα διαβάζετε ο ένας τα μηνύματα του άλλου!</p></div>
+  <div class="challenge"><p><strong>🏆 Πρόκληση: τηλεθερμόμετρο</strong></p><p>Το ένα micro:bit μένει έξω στο παράθυρο και κάθε 5 δευτερόλεπτα στέλνει τη θερμοκρασία: <code>radio.send(str(temperature()))</code>. Το άλλο, μέσα στην τάξη, τη δείχνει. Συνδύασες δύο αποστολές!</p></div>
+  <button class="done-btn" data-done-for="m11">Αποστολή ολοκληρώθηκε!</button>
+</div>
+</section>
+
+<!-- ================= BOSS ================= -->
+<section class="lv" id="boss" data-mission data-xp="300" data-title="⚔️ Τελικό επίπεδο">
+<div class="wrap">
+  <p class="kicker">⚔️ Τελικό επίπεδο <span class="badge">+300 XP</span></p>
+  <h2>⚡ Αγώνας αντανακλαστικών</h2>
+  <p>Ώρα να συνδυάσεις δυνάμεις: οθόνη, κουμπιά, ήχος, τυχαίοι αριθμοί και χρόνος. Πατάς B και περιμένεις. Όταν εμφανιστεί η καρδιά, πατάς A όσο πιο γρήγορα μπορείς. Αν πατήσεις νωρίτερα, χάνεις!</p>
+  <div class="step s1">
+    <h3><span class="n">1</span>Φτιάξ’ το με blocks</h3>
+    <p>Νέο block: το <strong>running time (ms)</strong> είναι ένα χρονόμετρο που μετράει χιλιοστά του δευτερολέπτου από τη στιγμή που άναψε το micro:bit.</p>
+<script type="text/x-blocks">
+@basic on start
+  variables set [ready] to «false»
+@input on button [B] pressed
+  basic clear screen
+  variables set [ready] to «false»
+  basic pause \(ms\) {math:pick random (1000) to (4000)}
+  basic show icon [♥]
+  variables set [start] to {input:running time \(ms\)}
+  variables set [ready] to «true»
+@input on button [A] pressed
+  logic if «{variables:ready}» then
+    variables set [ready] to «false»
+    basic show number {math:{input:running time \(ms\)} − {variables:start}}
+  logic else
+    basic show icon [✗ no]
+    music play sound [sad] [until done]
+</script>
+  </div>
+  <div class="step s2">
+    <h3><span class="n">2</span>Γράψ’ το σε Python</h3>
+    <div class="tscroll"><table>
+      <thead><tr><th>Block</th><th>Python</th></tr></thead>
+      <tbody>
+        <tr><td data-blk="input|{input:running time \(ms\)}"></td><td><code>running_time()</code></td></tr>
+      </tbody>
+    </table></div>
+    <p>Αυτή η μετάφραση είναι η πιο δύσκολη, γιατί στην Python δεν υπάρχουν δύο event blocks που τρέχουν «ταυτόχρονα». Πρέπει μέσα στην αναμονή να ελέγχεις κι εσύ αν πατήθηκε νωρίς το A. Νέες λέξεις: <code>break</code> (βγες από τον βρόχο), <code>continue</code> (πήγαινε στον επόμενο γύρο) και <code>None</code> («τίποτα ακόμα»). Η λύση κρατάει και το <strong>ρεκόρ</strong>.</p>
+    <details class="sol"><summary>Δείξε τη λύση σε Python</summary>
+<script type="text/plain" class="py">from microbit import *
+import random
+import music
+
+best = None                       # δεν υπάρχει ρεκόρ ακόμα
+display.show("?")
+
+while True:
+    if button_b.was_pressed():    # ξεκινά ένας γύρος
+        display.clear()
+        button_a.was_pressed()    # ξέχνα παλιά πατήματα
+        wait = random.randint(1000, 4000)
+        start_wait = running_time()
+        cheated = False
+        while running_time() - start_wait < wait:
+            if button_a.was_pressed():
+                cheated = True
+                break
+
+        if cheated:
+            display.show(Image.NO)
+            audio.play(Sound.SAD)
+            continue
+
+        display.show(Image.HEART)
+        start = running_time()
+        while not button_a.was_pressed():
+            pass
+        ms = running_time() - start
+        display.scroll(ms)
+
+        if best is None or ms < best:
+            best = ms
+            display.show(Image.HAPPY)
+            music.play(["C5:2", "G5:4"])
+</script>
+    </details>
+  </div>
+  <div class="challenge"><p><strong>🏆 Προκλήσεις αφεντικού</strong></p>
+    <p>① Δύο παίκτες: ο ένας πατάει A, ο άλλος B. Όποιος πατήσει πρώτος μετά την καρδιά κερδίζει. Το παιχνίδι ξεκινά με το λογότυπο.</p>
+    <p>② Αντί για κουμπί: «κούνησέ το μόλις δεις την καρδιά!».</p>
+    <p>③ Εφεύρε το δικό σου παιχνίδι με τουλάχιστον τρεις αισθητήρες. Ιδέες: βηματόμετρο, «ζεστή πατάτα» με ραδιόφωνο, ψηφιακό κατοικίδιο που πεινάει.</p>
+  </div>
+  <button class="done-btn" data-done-for="boss">Νίκησα το αφεντικό!</button>
+</div>
+</section>
+
+<!-- ================= CHEAT SHEET ================= -->
+<section class="lv" id="cheat">
+<div class="wrap">
+  <p class="kicker">📜 Σκονάκι</p>
+  <h2>Όλα τα blocks σε Python, σε μία σελίδα</h2>
+  <p>Η Python ξεκινά πάντα με <code>from microbit import *</code>.</p>
+  <div class="tscroll"><table>
+    <thead><tr><th>Block</th><th>MicroPython</th></tr></thead>
+    <tbody>
+      <tr><td data-blk="basic|forever"></td><td><code>while True:</code></td></tr>
+      <tr><td data-blk="basic|pause \(ms\) (500)"></td><td><code>sleep(500)</code></td></tr>
+      <tr><td data-blk="basic|show string &quot;Hi&quot;"></td><td><code>display.scroll("Hi")</code></td></tr>
+      <tr><td data-blk="basic|show icon [♥]"></td><td><code>display.show(Image.HEART)</code></td></tr>
+      <tr><td data-blk="basic|clear screen"></td><td><code>display.clear()</code></td></tr>
+      <tr><td data-blk="led|plot x (0) y (0)"></td><td><code>display.set_pixel(0, 0, 9)</code></td></tr>
+      <tr><td data-blk="input|on button [A] pressed"></td><td><code>button_a.was_pressed()</code></td></tr>
+      <tr><td data-blk="logic|«input:button [A] is pressed»"></td><td><code>button_a.is_pressed()</code></td></tr>
+      <tr><td data-blk="input|on logo [pressed]"></td><td><code>pin_logo.is_touched()</code></td></tr>
+      <tr><td data-blk="input|on pin [P0] pressed"></td><td><code>pin0.is_touched()</code></td></tr>
+      <tr><td data-blk="input|{input:light level}"></td><td><code>display.read_light_level()</code> (0 έως 255)</td></tr>
+      <tr><td data-blk="input|{input:temperature \(°C\)}"></td><td><code>temperature()</code></td></tr>
+      <tr><td data-blk="input|{input:acceleration \(mg\) [x]}"></td><td><code>accelerometer.get_x()</code></td></tr>
+      <tr><td data-blk="input|on [shake]"></td><td><code>accelerometer.was_gesture("shake")</code></td></tr>
+      <tr><td data-blk="input|{input:compass heading \(°\)}"></td><td><code>compass.heading()</code></td></tr>
+      <tr><td data-blk="input|{input:magnetic force \(µT\) [strength]}"></td><td><code>compass.get_field_strength() // 1000</code></td></tr>
+      <tr><td data-blk="input|{input:sound level}"></td><td><code>microphone.sound_level()</code> (0 έως 255)</td></tr>
+      <tr><td data-blk="input|on [loud] sound"></td><td><code>microphone.was_event(SoundEvent.LOUD)</code></td></tr>
+      <tr><td data-blk="input|{input:running time \(ms\)}"></td><td><code>running_time()</code></td></tr>
+      <tr><td data-blk="music|play tone [Middle C] for [1 beat] [until done]"></td><td><code>music.play("C4:4")</code></td></tr>
+      <tr><td data-blk="music|play sound [giggle] [until done]"></td><td><code>audio.play(Sound.GIGGLE)</code></td></tr>
+      <tr><td data-blk="radio|radio set group (7)"></td><td><code>radio.config(group=7)</code>, <code>radio.on()</code></td></tr>
+      <tr><td data-blk="radio|radio send string &quot;Hi&quot;"></td><td><code>radio.send("Hi")</code></td></tr>
+      <tr><td data-blk="radio|on radio received [receivedString]"></td><td><code>radio.receive()</code></td></tr>
+      <tr><td data-blk="math|{math:pick random (1) to (6)}"></td><td><code>random.randint(1, 6)</code></td></tr>
+    </tbody>
+  </table></div>
+  <h3>Για περισσότερα</h3>
+  <ul>
+    <li><a href="https://makecode.microbit.org" target="_blank" rel="noopener">MakeCode για micro:bit</a></li>
+    <li><a href="https://python.microbit.org" target="_blank" rel="noopener">Επεξεργαστής Python για micro:bit</a> (με ενσωματωμένο οδηγό αναφοράς)</li>
+    <li><a href="https://microbit-micropython.readthedocs.io" target="_blank" rel="noopener">Τεκμηρίωση MicroPython για micro:bit</a></li>
+    <li><a href="https://microbit.org/projects/" target="_blank" rel="noopener">Ιδέες για projects στο microbit.org</a></li>
+  </ul>
+</div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p><button class="reset" id="reset">Μηδένισε τους πόντους μου</button></p>
+    <p>Δεν είναι επίσημη σελίδα του Micro:bit Educational Foundation. Τα micro:bit και MakeCode ανήκουν στους δημιουργούς τους. Τα blocks της σελίδας είναι απομιμήσεις για εκπαιδευτική χρήση.</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  const esc = s => s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+
+  /* ---------- MakeCode-style block renderer ---------- */
+  const PAIRS = {"{":"}","(":")","«":"»","[":"]","%":"%",'"':'"'};
+  function findClose(s,i,open,close){
+    if(open===close) return s.indexOf(close,i+1);
+    let d=0;
+    for(let j=i;j<s.length;j++){
+      if(s[j]==="\\"){j++;continue;}
+      if(s[j]===open) d++;
+      else if(s[j]===close){ d--; if(d===0) return j; }
+    }
+    return -1;
+  }
+  function wrap(open,inner){
+    if(open==="{"){
+      const m = inner.match(/^(\w+):([\s\S]*)$/);
+      const cat = m?m[1]:"basic", rest = m?m[2]:inner;
+      return `<span class="rep" style="--c:var(--b-${cat})">${inl(rest)}</span>`;
+    }
+    if(open==="«"){
+      const m = inner.match(/^(\w+):([\s\S]*)$/);
+      const cat = m?m[1]:"logic", rest = m?m[2]:inner;
+      return `<span class="bool" style="--c:var(--b-${cat})">${inl(rest)}</span>`;
+    }
+    if(open==="(") return `<span class="val">${inl(inner)}</span>`;
+    if(open==="[") return `<span class="dd">${inl(inner)}</span>`;
+    if(open==='"') return `<span class="val str">${esc(inner)}</span>`;
+    if(open==="%"){
+      const bits = inner.replace(/\//g,"");
+      return `<span class="ledgrid">${[...bits].map(b=>`<i class="${b==="1"?"on":""}"></i>`).join("")}</span>`;
+    }
+    return esc(inner);
+  }
+  function inl(s){
+    let out="", i=0;
+    while(i<s.length){
+      const ch=s[i];
+      if(ch==="\\"){ out+=esc(s[i+1]||""); i+=2; continue; }
+      if(PAIRS[ch]){
+        const j=findClose(s,i,ch,PAIRS[ch]);
+        if(j>i){ out+=wrap(ch,s.slice(i+1,j)); i=j+1; continue; }
+      }
+      out+=esc(ch); i++;
+    }
+    return out;
+  }
+  function parse(src){
+    const root={depth:-1,children:[]}, stack=[root];
+    for(const raw of src.split("\n")){
+      if(!raw.trim()) continue;
+      const depth=raw.match(/^ */)[0].length;
+      let t=raw.trim(), hat=false;
+      if(t[0]==="@"){hat=true;t=t.slice(1);}
+      const sp=t.indexOf(" ");
+      const node={depth,cat:t.slice(0,sp),text:t.slice(sp+1),hat,children:[],arms:[]};
+      while(stack[stack.length-1].depth>=depth) stack.pop();
+      const parent=stack[stack.length-1];
+      if(/^else\b/.test(node.text) && parent.children.length){
+        parent.children[parent.children.length-1].arms.push(node);
+      } else parent.children.push(node);
+      stack.push(node);
+    }
+    return root.children;
+  }
+  function render(n){
+    const st=`style="--c:var(--b-${n.cat})"`;
+    if(!n.children.length && !n.arms.length && !n.hat)
+      return `<div class="blk" ${st}><div class="row">${inl(n.text)}</div></div>`;
+    let h=`<div class="blk c${n.hat?" hat":""}" ${st}><div class="row">${inl(n.text)}</div><div class="body">${n.children.map(render).join("")}</div>`;
+    for(const a of n.arms) h+=`<div class="row">${inl(a.text)}</div><div class="body">${a.children.map(render).join("")}</div>`;
+    return h+`<div class="foot"></div></div>`;
+  }
+  document.querySelectorAll('script[type="text/x-blocks"]').forEach(s=>{
+    const d=document.createElement("div");
+    d.className="blocks";
+    d.setAttribute("role","img");
+    d.setAttribute("aria-label","Πρόγραμμα με blocks του MakeCode");
+    d.innerHTML=parse(s.textContent).map(render).join("");
+    s.replaceWith(d);
+  });
+  document.querySelectorAll("[data-blk]").forEach(td=>{
+    const v=td.getAttribute("data-blk"), k=v.indexOf("|");
+    const cat=v.slice(0,k), text=v.slice(k+1);
+    if(/^[{«]/.test(text)) td.innerHTML=inl(text);
+    else td.innerHTML=`<div class="blk" style="--c:var(--b-${cat})"><div class="row">${inl(text)}</div></div>`;
+  });
+
+  /* ---------- Python code blocks ---------- */
+  const KW=/(#.*$)|("[^"\n]*"|'[^'\n]*')|\b(def|while|if|elif|else|for|in|import|from|return|True|False|None|and|or|not|break|continue|pass)\b|\b(\d+)\b/gm;
+  function hl(code){
+    return esc(code).replace(KW,(m,cm,st,kw,nu)=>
+      cm?`<span class="cm">${cm}</span>`:st?`<span class="st">${st}</span>`:kw?`<span class="kw">${kw}</span>`:`<span class="nu">${nu}</span>`);
+  }
+  document.querySelectorAll("script.py").forEach(s=>{
+    const code=s.textContent.replace(/^\n+/,"").replace(/\s+$/,"");
+    const pre=document.createElement("pre"); pre.className="code";
+    pre.innerHTML=`<code>${hl(code)}</code>`;
+    const b=document.createElement("button"); b.className="copy"; b.type="button"; b.textContent="Αντιγραφή";
+    b.addEventListener("click",()=>{
+      navigator.clipboard.writeText(code).then(()=>{b.textContent="Αντιγράφηκε!";setTimeout(()=>b.textContent="Αντιγραφή",1500);}).catch(()=>{});
+    });
+    pre.appendChild(b);
+    s.replaceWith(pre);
+  });
+
+  /* ---------- Hero micro:bit ---------- */
+  const ICONS={
+    heart:"0101011111111110111000100",
+    small:"0000001010011100010000000",
+    happy:"0000001010000001000101110",
+    surprised:"0101000000001000101000100"
+  };
+  const hm=document.getElementById("hero-matrix");
+  for(let i=0;i<25;i++) hm.appendChild(document.createElement("i"));
+  const cells=[...hm.children];
+  const show=k=>ICONS[k].split("").forEach((b,i)=>cells[i].classList.toggle("on",b==="1"));
+  const still=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let big=true, hold=0;
+  show("heart");
+  if(!still) setInterval(()=>{ if(Date.now()<hold) return; big=!big; show(big?"heart":"small"); },600);
+  document.querySelectorAll(".board [data-icon]").forEach(b=>b.addEventListener("click",()=>{
+    show(b.dataset.icon); hold=Date.now()+1600;
+  }));
+
+  /* ---------- XP & map ---------- */
+  const KEY="mbq-done-v1";
+  let done=new Set();
+  try{ done=new Set(JSON.parse(localStorage.getItem(KEY)||"[]")); }catch(e){}
+  const save=()=>{ try{ localStorage.setItem(KEY,JSON.stringify([...done])); }catch(e){} };
+  const missions=[...document.querySelectorAll("[data-mission]")];
+  const MAX=missions.reduce((a,m)=>a+ +m.dataset.xp,0);
+  const map=document.getElementById("map");
+  missions.forEach(m=>{
+    const li=document.createElement("li");
+    li.innerHTML=`<a href="#${m.id}" data-map="${m.id}">${esc(m.dataset.title)}</a>`;
+    map.appendChild(li);
+  });
+  const mini=document.getElementById("xp-mini");
+  for(let i=0;i<25;i++) mini.appendChild(document.createElement("i"));
+  const minis=[...mini.children];
+  const ORDER=[20,21,22,23,24,15,16,17,18,19,10,11,12,13,14,5,6,7,8,9,0,1,2,3,4];
+  function update(){
+    const xp=missions.filter(m=>done.has(m.id)).reduce((a,m)=>a+ +m.dataset.xp,0);
+    document.getElementById("xp-num").textContent=xp;
+    document.getElementById("xp-lv").textContent=Math.floor(xp/300)+1;
+    const lit=Math.round(xp/MAX*25);
+    minis.forEach(c=>c.classList.remove("on"));
+    ORDER.slice(0,lit).forEach(i=>minis[i].classList.add("on"));
+    missions.forEach(m=>{
+      const on=done.has(m.id);
+      const btn=document.querySelector(`[data-done-for="${m.id}"]`);
+      if(btn){
+        if(!btn.dataset.label) btn.dataset.label=btn.textContent;
+        btn.classList.toggle("is-done",on);
+        btn.textContent=on?`✓ Ολοκληρώθηκε (+${m.dataset.xp} XP)`:btn.dataset.label;
+        btn.setAttribute("aria-pressed",on);
+      }
+      document.querySelector(`[data-map="${m.id}"]`).classList.toggle("done",on);
+    });
+  }
+  document.querySelectorAll("[data-done-for]").forEach(b=>b.addEventListener("click",()=>{
+    const id=b.dataset.doneFor;
+    done.has(id)?done.delete(id):done.add(id);
+    save(); update();
+  }));
+  document.getElementById("reset").addEventListener("click",()=>{
+    if(confirm("Να μηδενιστούν όλοι οι πόντοι;")){ done.clear(); save(); update(); }
+  });
+  update();
+})();
+</script>
+</body>
+</html>
